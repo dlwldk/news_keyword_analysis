@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="areachartCall"></div>
+
+<script th:inline="javascript">
+    $(function () { //keyword_analysis_page 내 area chart div 매칭
+        $("#areachartCall").load("keyword_analysis_page #areacontainer");
+    })
+    var dates = [];
+    var current_data = [];
+    var previous_data = [];
+    var current_average_data = [];
+    var previous_average_data = [];
+    let previous_newsdate_list = [[${previous_newsdate}]];
+    let previous_keywordcount_list =[[${previous_newsdaykeyword}]];
+    let previous_keywordcount_average_list = [[${previous_newsdatekeyword}]];
+    let current_newsdate_list = [[${current_newsdate}]];
+    let current_keywordcount_list =[[${current_newsdaykeyword}]];
+    let current_keywordcount_average_list = [[${current_newsdatekeyword}]];
+    var current_average = 0;
+    var previous_average = 0;
+    const formatDate = (date)=>{ //날짜 표시 형식
+      let formatted_date = date.getMonth()+1 + "/" + date.getDate();
+      return formatted_date;
+    };
+
+    //날짜, 현재 키워드 갯수 넣기
+    current_newsdate_list.forEach(function (newsdate_item) {
+        var data = 0;
+        let date = formatDate(new Date(newsdate_item.news_date));
+        dates.push(date);
+        current_keywordcount_list.forEach(function (keywordcount_item) {
+            if(keywordcount_item.news_date == newsdate_item.news_date) {
+                data = keywordcount_item.keyword_count;
+                current_average += data;
+            }
+
+        })
+        current_data.push(data);
+
+    })
+
+    current_newsdate_list.forEach(function () {
+        current_average_data.push(current_average/365);
+
+    })
+
+
+
+    //작년 키워드 갯수 넣기
+    previous_newsdate_list.forEach(function (newsdate_item) {
+        var data = 0;
+        previous_keywordcount_list.forEach(function (keywordcount_item) {
+            if(keywordcount_item.news_date == newsdate_item.news_date) {
+                data = keywordcount_item.keyword_count;
+                previous_average += data;
+            }
+        })
+        previous_data.push(data);
+    })
+
+    previous_newsdate_list.forEach(function () {
+        previous_average_data.push(previous_average/365);
+
+    })
+
+
+
+    Highcharts.chart('areachartCall', {
+        chart: {
+            type: 'area'
+        },
+        title: {
+            text: '일별 키워드 현황'
+        },
+        legend: {
+            //layout: 'vertical',
+            align: 'left',
+            verticalAlign: 'top',
+            x: 100,
+            y: 70,
+            floating: true,
+            borderWidth: 1,
+            backgroundColor:
+                Highcharts.defaultOptions.legend.backgroundColor || '#FFFFFF'
+        },
+        xAxis: {
+            categories: dates
+        },
+        yAxis: {
+            title: {
+                text: ''
+            }
+        },
+        plotOptions: {
+            area: {
+                fillOpacity: 0.5
+            }
+        },
+        credits: {
+            enabled: false
+        },
+        series: [{
+            name: '금년',
+            data: current_data,
+            color: '#FF3300'
+        }, {
+            name: '전년',
+            data: previous_data,
+            color: '#4781ed'
+        }, {
+            name: '금년 평균',
+            type: 'spline',
+            data: current_average_data,
+            marker: {
+                enabled: false
+            },
+            color: '#f200ff'
+            // legend: {
+            //     align: 'right',
+            //     verticalAlign: 'top'
+            //
+            // }
+        }, {
+            name: '전년 평균',
+            type: 'spline',
+            data: previous_average_data,
+            marker: {
+                enabled: false
+            },
+            color: '#209406'
+        }
+        ]
+    });
+</script>
+</body>
+</html>

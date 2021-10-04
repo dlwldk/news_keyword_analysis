@@ -1,0 +1,90 @@
+.CollectedItems {
+    /*position:relative;*/
+    max-width:2000px;
+    margin:auto;
+    overflow-x: scroll;
+    border:1px solid #000;
+
+}
+
+/*.table-scroll table {*/
+/*    width:100%;*/
+/*    margin:auto;*/
+/*    border-collapse:separate;*/
+/*    border-spacing:0;*/
+/*}*/
+
+
+.CollectedItems table {
+    /*overflow-x: auto;*/
+    table-layout:fixed;
+    /*word-break:break-all;*/
+    margin:auto;
+    border-collapse:collapse;
+    border-spacing:0;
+    width: 1000px;
+    height: 100px;
+
+}
+
+caption {
+
+    text-align: center;
+}
+
+/*.horizontal-table thead th {*/
+/*    width:5%;*/
+/*    padding:5px 1px;*/
+/*    border:1px solid #000;*/
+/*    background:#fff;*/
+/*    white-space:nowrap;*/
+/*    vertical-align:top;*/
+/*    color: #ed2600;*/
+/*}*/
+
+.CollectedItems th {
+    width: 100px;
+    height: 50px;
+    position: sticky;
+    /*padding:5px 1px;*/
+    border:1px solid #000;
+    /*background: #5dec0c;*/
+    background: #212121;
+    white-space:normal; /*공백, 여백*/
+    /*vertical-align:top;*/
+    color: #ed2600;
+    text-align: center;
+    text-valign: center;
+
+}
+
+.CollectedItems td {
+    width: 90px;
+    font-size: 12px;
+    /*padding:5px 1px;*/
+    /*color: #ffffff;*/
+    color: #212121;
+    text-align: center;
+    text-valign: center;
+    height: 50px;
+    content: counter(aaa) " ";
+
+}
+
+/*.CollectedItems tr {*/
+/*    height: 50px;*/
+/*}*/
+
+/*.table-responsive fixed-side {*/
+/*    border:1px solid #000;*/
+/*    background:#eee;*/
+/*    visibility:visible;*/
+
+/*}*/
+
+@media screen and (max-width:2000px) {
+    /*normal*/
+    .table-responsive {
+        overflow-x:auto;
+    }
+}

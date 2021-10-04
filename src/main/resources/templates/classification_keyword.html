@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="piechartCall"></div>
+<center><b>[[${newskeywordcount[0].category}]]</b></center>
+<script th:inline="javascript">
+    $(function() { //classification_page 내 pie chart div 매칭
+        $("#piechartCall").load("classification_page #piecontainer");
+    })
+    var category = [[${newskeywordcount[0].category}]];
+    var first_keyword = [[${newskeywordcount[0].keyword}]];
+    var second_keyword = [[${newskeywordcount[1].keyword}]];
+    var third_keyword = [[${newskeywordcount[2].keyword}]];
+    var fourth_keyword = [[${newskeywordcount[3].keyword}]];
+    var fifth_keyword = "기타";
+    var first_value;
+    var second_value;
+    var third_value;
+    var fourth_value;
+    var fifth_value;
+    var total_count = 0;
+    let list = [[${newskeywordcount}]];
+
+    list.forEach(function(item) {
+        total_count += item.keyword_count
+    });
+
+    first_value = [[${newskeywordcount[0].keyword_count}]] / total_count * 100;
+    second_value = [[${newskeywordcount[0].keyword_count}]] / total_count * 100;
+    third_value = [[${newskeywordcount[0].keyword_count}]] / total_count * 100;
+    fourth_value = [[${newskeywordcount[0].keyword_count}]] / total_count * 100;
+    fifth_value = 100 - (first_value + second_value + third_value + fourth_value);
+
+    // list.forEach(function(item) {
+    //     first_value = item
+    // });
+
+
+
+    //alert(category);
+
+    Highcharts.chart('piechartCall', {
+        credits: {
+            enabled: false
+        },
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: '분류별 상위 키워드 Top5'
+        },
+        accessibility: {
+            announceNewData: {
+                enabled: true
+            },
+            point: {
+                valueSuffix: '%'
+            }
+        },
+
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name}: {point.y:.1f}%'
+                }
+            }
+        },
+
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+        },
+
+        series: [
+            {
+                name: category,
+                colorByPoint: true,
+                data: [
+                    {
+                        name: first_keyword,
+                        y: first_value
+
+                    },
+                    {
+                        name: second_keyword,
+                        y: second_value
+
+                    },
+                    {
+                        name: third_keyword,
+                        y: third_value
+
+                    },
+                    {
+                        name: fourth_keyword,
+                        y: fourth_value
+
+                    },
+                    {
+                        name: fifth_keyword,
+                        y: fifth_value
+
+                    }
+                ]
+            }
+        ]
+    });
+
+
+
+</script>
+
+</body>
+</html>

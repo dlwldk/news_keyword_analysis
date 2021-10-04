@@ -1,0 +1,272 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <!--    <meta http-equiv="X-UA-Compatible" content="ie=edge">-->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>수집 데이터</title>
+    <link rel="stylesheet" href="CSS/menu.css">
+    <link rel="stylesheet" href="CSS/table.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.min.css">-->
+    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.standalone.min.css">-->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="/resources/demos/style.css">
+
+
+    <!-- <img src="Image/kt_cs_logo.jpg" alt="My ae"> -->
+    <ul class="menulist">
+        <li><a href="./collected_data">수집 데이터</a></li>
+        <li><a href="./classification">분류 분석</a></li>
+        <li><a href="./keyword_analysis">키워드 분석</a></li>
+
+    </ul>
+
+    <center><b>수집 현황</b></center>
+    <br>
+<!--    <caption style="font-weight: 700;" aligh="center"><b>수집 현황</b></caption>-->
+    <div class="CollectedItems">
+
+        <table class="table" border="1">
+            <thead>
+            <tr>
+                <th class="fixed-side">날짜</th>
+                <td th:each="list : ${newsdatelist}">
+                    <span th:text="${list.news_date}">
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th class="fixed-side">수집 건수</th>
+                <td th:each="list : ${newsdatelist}">
+                    <span th:text="${list.news_date_count}">
+                    </span>
+                </td>
+            <tr>
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>-->
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>-->
+
+</head>
+<body>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/demos/style.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script>
+    $(function () {
+        var dateFormat = "yy-mm-dd",
+            from = $("#from")
+                .datepicker({
+                    // defaultDate: "+1w",
+
+                    defaultDate: "2021-08-01",
+                    changeMonth: true,
+                    changeYear: true,
+                    numberOfMonths: 1,
+                    //currentText: "2021-08-01",
+                    onSelect: function (fromDate) {
+
+                        var arr = fromDate.split("-");
+                        var year = arr[0];
+                        var month = arr[1];
+                        var day = arr[2];
+                        const str = String(year) + String(month) + String(day);
+
+                        $("#fromserialnum").text(str);
+                        $("#fromyear").text(year); //from 년도
+                        $("#frommonth").text(month); //from 달
+                        $("#fromday").text(day); //from 일
+
+                    }
+                })
+
+                .on("click", function () {
+                    to.datepicker("option", "minDate", getDate(this));
+                }),
+            to = $("#to").datepicker({
+                defaultDate: "2021-08-31",
+                changeMonth: true,
+                changeYear: true,
+                numberOfMonths: 1,
+                onSelect: function (toDate) {
+
+                    var arr = toDate.split("-");
+                    var year = arr[0];
+                    var month = arr[1];
+                    var day = arr[2];
+                    const str = String(year) + String(month) + String(day);
+
+                    $("#toserialnum").text(str);
+                    $("#toyear").text(year); //to 년도
+                    $("#tomonth").text(month); //to 달
+                    $("#today").text(day); //to 일
+
+                }
+            })
+                .on("click", function () {
+                    from.datepicker("option", "maxDate", getDate(this));
+                });
+
+        function getDate(element) {
+            var date;
+            var dateFormat = "yy-mm-dd"
+            try {
+                date = $.datepicker.parseDate(dateFormat, element.value);
+            } catch (error) {
+                date = "null";
+            }
+            return date;
+        }
+    });
+
+    $.datepicker.setDefaults({
+        dateFormat: 'yy-mm-dd',
+        buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif",
+        showOn: "button" // 버튼을 표시하고,버튼을 눌러야만 달력 표시
+    });
+
+</script>
+
+<br>
+<br>
+<form class="form-inline d-flex justify-content-center" th:action="@{/collected_data}" , method="GET">
+    <input type="text" id="from" th:value="${fromDate}" name="from">&nbsp;&nbsp;
+    <input type="text" id="to" th:value="${toDate}" name="to">&nbsp &nbsp
+    <form name="searchList">
+        <select name="firstcolName" id="firstcolName">
+            <option value="">분류</option>
+            <option value="society">사회</option>
+            <option value="politics">정치</option>
+            <option value="economic">경제</option>
+            <option value="culture">문화</option>
+            <option value="digital">IT</option>
+            <option value="etc">기타</option>
+        </select>
+
+        <select name="secondcolName" id="secondcolName">
+            <option value="">구분</option>
+            <option value="title">뉴스명</option>
+            <option value="keyword">키워드</option>
+            <option value="press_agency">언론사</option>
+        </select>
+
+        <div class="form-group mx-sm-3 mb-2">
+            <label for="searchText" class="sr-only">검색</label>
+            <input type="text" class="form-control" id="searchText" name="searchText" th:value="${param.searchText}">
+        </div>
+        <button type="submit" id="btnSearch" class="btn btn-dark mb-2">검색</button>
+<!--        <input type="submit" value="전송">-->
+    </form>
+</form>
+
+<br>
+
+<form class="form-inline d-flex justify-content-center">
+
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#btnSearch").click(function(){
+            var searchText = $("input[name=searchText]").val();
+            var firstcolName = $("#firstcolName").val();
+            var secondcolName = $("#secondcolName").val();
+            // var val = firstcolName.options[firstcolName.selectedIndex].value;
+            // if( "" == firstcolName || "" == secondcolName) {
+            //     alert("검색 조건을 선택해주세요.");
+            //     $("input[name=searchText]").val("");
+            //     $("input[name=searchText]").focus;
+            //     return;
+            // }
+            // if ( "" == searchText) {
+            //     alert("검색어를 입력해주세요.");
+            //     return;
+            //
+            // }
+            var frm = document.searchFrm;
+
+            frm.method = "GET";
+            frm.action = "collected_data";
+            frm.submit();
+        });
+    });
+
+</script>
+
+<br>
+
+<div class="container-fluid">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">No</th>
+            <th scope="col">분류</th>
+            <th scope="col">뉴스명</th>
+            <th scope="col">언론사</th>
+            <th scope="col">키워드</th>
+            <th scope="col">날짜</th>
+        </tr>
+        </thead>
+        <tbody id="tbody">
+
+        <b>총 <span th:text="${list.totalElements}"></span>건
+            (<span th:text="${list.pageable.pageNumber+1}"></span>page /
+            <span th:text="${list.totalPages}"></span>pages)</b>
+
+
+        <tr style="font-size: 12px" th:each="list: ${list}">
+            <!--<th scope="row">1</th>-->
+            <td th:text="${list.id}"></td>
+            <td th:text="${list.category}"></td>
+            <td><a th:text="${list.title}" th:href="${list.link}"></a></td>
+            <td th:text="${list.press_agency}"></td>
+            <td th:text="${list.keyword}"></td>
+            <td th:text="${list.input_date}"></td>
+
+        </tr>
+
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${10 >= list.pageable.pageNumber+1 } ? 'disabled'">
+                <a class="page-link" href="#"
+                   th:href="@{collected_data(from=${fromDate}, to=${toDate}, firstcolName=${param.firstcolName}, secondcolName=${param.secondcolName}, searchText = ${param.searchText}, page=${list.pageable.pageNumber-10})}"><<</a>
+            </li>
+            <li class="page-item" th:classappend="${1 == list.pageable.pageNumber+1 } ? 'disabled'">
+                <a class="page-link" href="#"
+                   th:href="@{collected_data(from=${fromDate}, to=${toDate}, firstcolName=${param.firstcolName}, secondcolName=${param.secondcolName}, searchText = ${param.searchText}, page=${list.pageable.pageNumber-1})}"><</a>
+            </li>
+            <li class="page-item" th:classappend="${i == list.pageable.pageNumber+1 } ? 'disabled'"
+                th:each="i : ${#numbers.sequence(startPage, endPage)}">
+                <a class="page-link" href="#"
+                   th:href="@{collected_data(from=${fromDate}, to=${toDate}, firstcolName=${param.firstcolName}, secondcolName=${param.secondcolName}, searchText = ${param.searchText}, page=${i-1})}" th:text="${i}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${list.totalPages == list.pageable.pageNumber+1 } ? 'disabled'">
+                <a class="page-link" href="#"
+                   th:href="@{collected_data(from=${fromDate}, to=${toDate}, firstcolName=${param.firstcolName}, secondcolName=${param.secondcolName}, searchText = ${param.searchText}, page=${list.pageable.pageNumber+1})}">></a>
+            </li>
+            <li class="page-item"
+                th:classappend="${list.totalPages-10 <= list.pageable.pageNumber+1 } ? 'disabled'">
+                <a class="page-link" href="#"
+                   th:href="@{collected_data(from=${fromDate}, to=${toDate}, firstcolName=${param.firstcolName}, secondcolName=${param.secondcolName}, searchText = ${param.searchText}, page=${list.pageable.pageNumber+10})}">>></a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+
+
+</body>
+
+
+
+

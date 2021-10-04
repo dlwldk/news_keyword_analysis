@@ -1,0 +1,183 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <!--    <meta http-equiv="X-UA-Compatible" content="ie=edge">-->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>키워드 분석</title>
+    <link rel="stylesheet" href="CSS/menu.css">
+    <link rel="stylesheet" href="CSS/chart.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.min.css">-->
+    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.standalone.min.css">-->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/heatmap.js"></script>
+    <script src="https://code.highcharts.com/modules/treemap.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+
+</head>
+<body>
+<!-- <img src="Image/kt_cs_logo.jpg" alt="My ae"> -->
+<ul class="menulist">
+    <li><a href="./collected_data">수집 데이터</a></li>
+    <li><a href="./classification">분류 분석</a></li>
+    <li><a href="./keyword_analysis">키워드 분석</a></li>
+</ul>
+
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script>
+    $(function () {
+        var dateFormat = "yy-mm-dd",
+            from = $("#from")
+                .datepicker({
+                    defaultDate: "2020-09-01",
+                    changeMonth: true,
+                    changeYear: true,
+                    numberOfMonths: 1,
+
+                    onSelect: function (fromDate) {
+                        var arr = fromDate.split("-");
+                        var year = arr[0];
+                        var month = arr[1];
+                        var day = arr[2];
+                        const str = String(year) + String(month) + String(day);
+
+                        $("#fromserialnum").text(str);
+                        $("#fromyear").text(year); //from 년도
+                        $("#frommonth").text(month); //from 달
+                        $("#fromday").text(day); //from 일
+                    }
+                })
+
+                .on("click", function () {
+                    to.datepicker("option", "minDate", getDate(this));
+                }),
+            to = $("#to").datepicker({
+                defaultDate: "2021-08-31",
+                changeMonth: true,
+                changeYear: true,
+                numberOfMonths: 1,
+
+                onSelect: function (toDate) {
+
+                    var arr = toDate.split("-");
+                    var year = arr[0];
+                    var month = arr[1];
+                    var day = arr[2];
+                    const str = String(year) + String(month) + String(day);
+
+                    $("#toserialnum").text(str);
+                    $("#toyear").text(year); //to 년도
+                    $("#tomonth").text(month); //to 달
+                    $("#today").text(day); //to 일
+
+                }
+            })
+                .on("click", function () {
+                    from.datepicker("option", "maxDate", getDate(this));
+                });
+
+        function getDate(element) {
+            var date;
+            var dateFormat = "yy-mm-dd"
+            try {
+                date = $.datepicker.parseDate(dateFormat, element.value);
+            } catch (error) {
+                date = "null";
+            }
+
+            return date;
+        }
+    });
+
+    $.datepicker.setDefaults({
+        dateFormat: 'yy-mm-dd',
+        buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif",
+        showOn: "button" // 버튼을 표시하고,버튼을 눌러야만 달력 표시
+    });
+
+</script>
+
+<br>
+<br>
+<form class="form-inline d-flex justify-content-center" action="keyword_analysis" , method="GET">
+    <input type="text" id="from" th:value="${fromDate}" name="from">&nbsp;&nbsp;
+    <input type="text" id="to" th:value="${toDate}" name="to">&nbsp &nbsp
+    <input type="submit" value="검색">
+</form>
+
+<!--<div class="d-flex justify-content-center">-->
+
+
+<!--</div>-->
+
+
+<div class="container-fluid">
+    <figure class="areacharts-figure">
+        <div id="areacontainer" name="areacontainer"></div>
+    </figure>
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th scope="col">No</th>
+            <th scope="col">키워드</th>
+            <th scope="col">합계 (건)</th>
+            <th scope="col">일 평균 (건)</th>
+            <th scope="col">비중 (%)</th>
+            <th scope="col">전년 대비 증감율 (%)</th>
+
+        </tr>
+        </thead>
+        <tbody id="tbody">
+
+        <tr style="font-size: 12px" th:each="list: ${current_newsdatekeyword}">
+            <td th:text="${list.id}"></td>
+            <td><a th:text="${list.keyword}" th:href="'javascript:chartAjaxCall(\''+ ${list.keyword} + '\');'"></a></td>
+            <td th:text="${list.keyword_count}"></td>
+            <td th:with="day_average=${list.keyword_count}/${newsdaykeywordtotal}"
+                th:text="${#numbers.formatDecimal(day_average, 2, 2, 'POINT')}"></td>
+            <td th:with="importance=${list.keyword_count}/${newsdatekeywordtotal}*100"
+                th:text="${#numbers.formatDecimal(importance, 1, 2, 'POINT')}"></td>
+            <td th:with="rate_of_change=${list.keyword_count}/365"
+                th:text="${#numbers.formatDecimal(rate_of_change, 2, 2, 'POINT')}"></td>
+<!--            <td th:text="${list2.keyword_count}/365"></td>-->
+
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    function chartAjaxCall(keyword) {
+        const fromDate = document.getElementById('from').value;
+        const toDate = document.getElementById('to').value;
+        $.ajax({
+            type: "GET",
+            async: true,
+            url: '/keyword_analysis_keyword?from=' + fromDate + '&to=' + toDate + '&keyword=' + keyword,
+            success: function (response) {
+                console.dir(response);
+                $('#areacontainer').html(response);
+            }
+        })
+    }
+
+
+</script>
+
+
+</body>

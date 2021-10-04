@@ -1,0 +1,212 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <!--    <meta http-equiv="X-UA-Compatible" content="ie=edge">-->
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>수집 데이터</title>
+  <link rel="stylesheet" href="CSS/menu.css">
+  <link rel="stylesheet" href="CSS/table.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.min.css">-->
+  <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.standalone.min.css">-->
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+
+</head>
+<body>
+<!-- <img src="Image/kt_cs_logo.jpg" alt="My ae"> -->
+<ul class="menulist">
+  <!--        <li class="current"><a href="#">Home</a></li>-->
+  <li><a href="./collected_data">수집 데이터</a></li>
+  <li><a href="./classification">분류 분석</a></li>
+  <li><a href="./keyword_analysis">키워드 분석</a></li>
+
+</ul>
+</body>
+</html>
+
+
+<caption style="font-weight: 700;" ><b>수집 현황</b></caption>
+<div class="CollectedItems">
+
+  <table class="table" border="1">
+
+
+    <thead>
+    <tr>
+      <th class="fixed-side">날짜</th>
+      <td th:each="list : ${newsdatelist}">
+        <span th:text="${list.news_date}"
+        </span>
+      </td>
+
+
+    </tr>
+    <tr>
+      <th class="fixed-side">날짜</th>
+      <td th:each="list : ${newsdatecount}">
+        <span th:text="${list.news_list_count}"
+        </span>
+      </td>
+
+    <tr>
+
+
+    </tr>
+    </thead>
+  </table>
+</div>
+
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>-->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/demos/style.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script>
+  $( function() {
+    var dateFormat = "yy-mm-dd",
+            from = $( "#from" )
+                    .datepicker({
+                      // defaultDate: "+1w",
+                      defaultDate: "01/01/2018",
+                      changeMonth: true,
+                      changeYear: true,
+                      numberOfMonths: 1
+                    })
+                    .on( "change", function() {
+                      to.datepicker( "option", "minDate", getDate( this ) );
+                    }),
+            to = $( "#to" ).datepicker({
+              defaultDate: "08/31/2018",
+              changeMonth: true,
+              changeYear: true,
+              numberOfMonths: 1
+            })
+                    .on( "change", function() {
+                      from.datepicker( "option", "maxDate", getDate( this ) );
+                    });
+
+    function getDate( element ) {
+      var date;
+      var dateFormat = "yy-mm-dd"
+      try {
+        date = $.datepicker.parseDate( dateFormat, element.value );
+      } catch( error ) {
+        date = null;
+      }
+
+      return date;
+    }
+  } );
+
+  $.datepicker.setDefaults({
+    buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif",
+    showOn: "button" // 버튼을 표시하고,버튼을 눌러야만 달력 표시
+  });
+</script>
+
+<br>
+<br>
+<input type="text" id="from" name="from">&nbsp;&nbsp;
+<input type="text" id="to" name="to">
+
+<!--<form action="/search" method="GET">-->
+<!--  <div class="btn-group" role="group" aria-label="Basic example">-->
+<!--    <input name="keyword" type="text" placeholder="검색어를 입력해주세요">-->
+<!--    <button class="btn btn-secondary">검색</button>-->
+<!--  </div>-->
+<!--</form>-->
+
+<form class="form-inline d-flex justify-content-center">
+  <div class="form-group mx-sm-3 mb-2">
+    <label for="searchText" class="sr-only">검색</label>
+    <input type="text" class="form-control" id="searchText" name="searchText">
+  </div>
+  <button type="submit" class="btn btn-dark mb-2">검색</button>
+
+
+</form>
+
+<br>
+
+<div class="container-fluid">
+  <table class="table table-hover" >
+    <thead>
+    <tr>
+      <th scope="col">No</th>
+      <th scope="col">분류</th>
+      <th scope="col">뉴스명</th>
+      <th scope="col">언론사</th>
+      <th scope="col">키워드</th>
+      <th scope="col">날짜</th>
+    </tr>
+    </thead>
+    <tbody id="tbody">
+
+    <b>총 <span th:text="${list.totalElements}"></span>건
+    (<span th:text="${list.pageable.pageNumber+1}"></span>page /
+    <span th:text="${list.totalPages-1}"></span>pages)</b>
+
+
+    <tr style="font-size: 12px" th:each="list: ${list}">
+      <!--<th scope="row">1</th>-->
+
+      <td th:text="${list.id}"></td>
+      <td th:text="${list.category}"></td>
+      <td><a th:text="${list.title}" th:href="${list.link}" ></a></td>
+      <td th:text="${list.press_agency}"></td>
+      <td th:text="${list.keyword}"></td>
+      <td th:text="${list.input_date}"></td>
+
+    </tr>
+
+
+    </tbody>
+  </table>
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" th:classappend="${1 == list.pageable.pageNumber+1 } ? 'disabled'">
+        <a class="page-link" href="#" th:href="@{collected_data(page=${list.pageable.pageNumber-1})}">Previous</a>
+      </li>
+      <li class="page-item" th:classappend="${i == list.pageable.pageNumber+1 } ? 'disabled'" th:each="i : ${#numbers.sequence(startPage, endPage)}">
+        <a class="page-link" href="#" th:href="@{collected_data(page=${i-1})}" th:text="${i}">1</a>
+      </li>
+      <li class="page-item" th:classappend="${list.totalPages == list.pageable.pageNumber+1 } ? 'disabled'">
+        <a class="page-link" href="#" th:href="@{collected_data(page=${list.pageable.pageNumber+1})}">Next</a>
+      </li>
+    </ul>
+  </nav>
+  <!--    <div class="text-center">-->
+  <!--        <span><a th:href="@{/newsList(currentPage=1)}">처음</a></span>-->
+
+  <!--        &lt;!&ndash; 현재 페이지가 1보다 클 경우 이전 href, 1보다 작은 경우 이전 text &ndash;&gt;-->
+  <!--        <span th:if=" > 1"><a th:href="@{/boardList(currentPage=(${currentPage}-1))}">이전</a></span>-->
+  <!--        <span th:unless="${currentPage > 1}" th:text="이전"></span>-->
+
+  <!--        &lt;!&ndash; #number.sequence 인수로 지정한 2개의 수 범위에서 배열을 생성 &ndash;&gt;-->
+  <!--        <th:block th:each="num : ${#numbers.sequence(startPageNum,lastPageNum)}">-->
+  <!--            <span th:if="${currentPage == num}" th:text="${'['+ num + ']'}"></span>-->
+  <!--            <a th:unless="${currentPage == num}" th:text="${'['+ num + ']'}" th:href="@{/boardList(currentPage=${num})}"></a>-->
+  <!--        </th:block>-->
+
+  <!--        &lt;!&ndash; 현재 페이지가 마지막페이지와 같지 않을 경우 다음 href, 같을 경우 다음 text &ndash;&gt;-->
+  <!--        <span th:if="${currentPage != lastPage}"><a th:href="@{/boardList(currentPage=(${currentPage}+1))}">다음</a></span>-->
+  <!--        <span th:unless="${currentPage != lastPage}" th:text="다음"></span>-->
+  <!--        <span><a th:href="@{/boardList(currentPage=${lastPage})}">마지막</a></span>-->
+</div>
+
+
+</div>
+
+
+
+
+</tbody>
+
+
+{{>layouts/footer}}
+

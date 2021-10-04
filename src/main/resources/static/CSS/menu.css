@@ -1,0 +1,107 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,500);
+.menulist {
+    font-family: 'Roboto', Arial, sans-serif;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 500;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+.menulist * {
+    box-sizing: border-box;
+}
+.menulist li {
+    display: inline-block;
+    list-style: outside none none;
+    margin: 0.5em 1em;
+    overflow: hidden;
+    position: relative;
+    border-radius: 3px;
+}
+.menulist li:before,
+.menulist li:after {
+    display: block;
+}
+.menulist li:before {
+    left: 0%;
+}
+.menulist li:after {
+    left: 75%;
+}
+.menulist a {
+    backface-visibility: hidden;
+    /*color: #e6e6e6;*/
+    color: #212121;
+    display: block;
+    padding: 0.5em 1em;
+    position: relative;
+    text-align: center;
+
+}
+.menulist a:before {
+    left: 25%;
+}
+.menulist a:after {
+    left: 50%;
+}
+.menulist a:hover {
+    text-decoration-line: none;
+    color: #ffffff;
+}
+.menulist li:before,
+.menulist li:after,
+.menulist a:before,
+.menulist a:after {
+    background-color: #ed2600;
+    position: absolute;
+    height: 100%;
+    width: 25%;
+    top: 0;
+    content: '';
+    z-index: -1;
+    opacity: 0;
+    -webkit-transition: all 0.25s steps(3);
+    transition: all 0.25s steps(3);
+}
+.menulist li:hover:before,
+.menulist li.current:before,
+.menulist li:hover:after,
+.menulist li.current:after,
+.menulist li:hover a:before,
+.menulist li.current a:before,
+.menulist li:hover a:after,
+.menulist li.current a:after {
+
+    opacity: 1;
+}
+.menulist li:hover:before,
+.menulist li.current:before {
+    -webkit-transition-delay: 0s;
+    transition-delay: 0s;
+}
+.menulist li:hover:after,
+.menulist li.current:after {
+    -webkit-transition-delay: 0.15s;
+    transition-delay: 0.15s;
+
+}
+.menulist li:hover a:before,
+.menulist li.current a:before {
+    -webkit-transition-delay: 0.05s;
+    transition-delay: 0.05s;
+
+}
+.menulist li:hover a:after,
+.menulist li.current a:after {
+    -webkit-transition-delay: 0.1s;
+    transition-delay: 0.1s;
+}
+
+.menuList li:active a {
+    background-color: #ed2600;
+}
+
+/* Demo purposes only */
+/*body {*/
+/*    background-color: #212121;*/
+/*}*/

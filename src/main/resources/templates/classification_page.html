@@ -1,0 +1,301 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <!--    <meta http-equiv="X-UA-Compatible" content="ie=edge">-->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>분류 분석</title>
+    <link rel="stylesheet" href="CSS/menu.css">
+    <link rel="stylesheet" href="CSS/chart.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.min.css">-->
+    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.standalone.min.css">-->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/heatmap.js"></script>
+    <script src="https://code.highcharts.com/modules/treemap.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+
+</head>
+<body>
+<!-- <img src="Image/kt_cs_logo.jpg" alt="My ae"> -->
+<ul class="menulist">
+    <!--        <li class="current"><a href="#">Home</a></li>-->
+    <li><a href="./collected_data">수집 데이터</a></li>
+    <li><a href="./classification">분류 분석</a></li>
+    <li><a href="./keyword_analysis">키워드 분석</a></li>
+
+</ul>
+
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script>
+    $(function () {
+        var dateFormat = "yy-mm-dd",
+            from = $("#from")
+                .datepicker({
+                    defaultDate: "2020-09-01",
+                    changeMonth: true,
+                    changeYear: true,
+                    numberOfMonths: 1,
+                    onSelect: function (fromDate) {
+
+                        var arr = fromDate.split("-");
+                        var year = arr[0];
+                        var month = arr[1];
+                        var day = arr[2];
+                        const str = String(year) + String(month) + String(day);
+
+                        $("#fromserialnum").text(str);
+                        $("#fromyear").text(year); //from 년도
+                        $("#frommonth").text(month); //from 달
+                        $("#fromday").text(day); //from 일
+
+                    }
+                })
+
+                .on("click", function () {
+                    to.datepicker("option", "minDate", getDate(this));
+                }),
+            to = $("#to").datepicker({
+                defaultDate: "2021-08-31",
+                changeMonth: true,
+                changeYear: true,
+                numberOfMonths: 1,
+                onSelect: function (toDate) {
+
+                    var arr = toDate.split("-");
+                    var year = arr[0];
+                    var month = arr[1];
+                    var day = arr[2];
+                    const str = String(year) + String(month) + String(day);
+
+                    $("#toserialnum").text(str);
+                    $("#toyear").text(year); //to 년도
+                    $("#tomonth").text(month); //to 달
+                    $("#today").text(day); //to 일
+
+                }
+            })
+                .on("click", function () {
+                    from.datepicker("option", "maxDate", getDate(this));
+                });
+
+        function getDate(element) {
+            var date;
+            var dateFormat = "yy-mm-dd"
+            try {
+                date = $.datepicker.parseDate(dateFormat, element.value);
+            } catch (error) {
+                date = "null";
+            }
+
+            return date;
+        }
+
+    });
+
+    $.datepicker.setDefaults({
+        dateFormat: 'yy-mm-dd',
+        buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif",
+        showOn: "button" // 버튼을 표시하고,버튼을 눌러야만 달력 표시
+    });
+
+</script>
+
+<br>
+<br>
+<form class="form-inline d-flex justify-content-center" action = "classification", method = "GET">
+    <input type="text" id="from" th:value="${fromDate}" name="from">&nbsp;&nbsp;
+    <input type="text" id="to" th:value="${toDate}" name="to">&nbsp &nbsp
+    <input type="submit" value = "검색">
+
+</form>
+
+
+<div class="d-flex justify-content-center">
+    <figure className="highcharts-figure">
+        <div id="container" name="container" style="width: 750px; height: 400px; margin-left: 500px"></div>
+    </figure>
+
+    <figure class="piecharts-figure">
+        <div id="piecontainer" name="piecontainer" style="width: 550px; height: 400px; "></div>
+    </figure>
+
+</div>
+
+
+<script th:inline="javascript">
+    const fromDate = document.getElementById('from').value;
+    const toDate = document.getElementById('to').value;
+    var society_value = 0 ;
+    var politics_value = 0;
+    var economic_value = 0;
+    var culture_value = 0;
+    var digital_value = 0;
+    var etc_value = 0;
+    var total_count = 0;
+    var dataarr;
+
+    let list = [[${newscategorycount}]];
+
+    list.forEach(function(item) {
+        total_count += item.category_count;
+    });
+    list.forEach(function(item){
+
+        switch (item.category) {
+            case "society":
+                society_value = item.category_count / total_count * 100;
+                break;
+            case "politics":
+                politics_value = item.category_count / total_count * 100;
+                break;
+            case "economic":
+                economic_value = item.category_count / total_count * 100;
+                break;
+            case "culture":
+                culture_value = item.category_count / total_count * 100;
+                break;
+            case "digital":
+                digital_value = item.category_count / total_count * 100;
+                break;
+            case "etc":
+                etc_value = item.category_count / total_count * 100;
+                break;
+        }
+
+    });
+
+    Highcharts.chart('container', {
+        credits: {
+            enabled: false
+        },
+        colorAxis: {
+            minColor: '#FFFFFF',
+            maxColor: Highcharts.getOptions().colors[0]
+        },
+        title: {
+            text: '분류별'
+        },
+        series: [{
+            type: 'treemap',
+            data: [{
+                name: '사회',
+                value: society_value,
+                colorValue: 1
+            }, {
+                name: '정치',
+                value: politics_value,
+                colorValue: 2
+            }, {
+                name: '경제',
+                value: economic_value,
+                colorValue: 3
+            }, {
+                name: '문화',
+                value: culture_value,
+                colorValue: 4
+            }, {
+                name: 'IT',
+                value: digital_value,
+                colorValue: 5
+            }, {
+                name: '기타',
+                value: etc_value,
+                colorValue: 6
+            }]
+        }],
+        accessibility: {
+            announceNewData: {
+                enabled: true
+            },
+            point: {
+                valueSuffix: '%'
+            }
+        },
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name} {point.value:.1f}%'
+                },
+                cursor: "pointer",
+                point: {
+                    events: {
+                        click: function(event) {
+                            if(this.name == "사회") {
+                                dataarr = {
+                                    from: fromDate,
+                                    to: toDate,
+                                    category: "society"
+                                };
+                            } else if(this.name == "정치"){
+                                dataarr = {
+                                    from: fromDate,
+                                    to: toDate,
+                                    category: "politics"
+                                };
+                            } else if(this.name == "경제"){
+                                dataarr = {
+                                    from: fromDate,
+                                    to: toDate,
+                                    category: "economic"
+                                };
+
+                            } else if(this.name == "문화"){
+                                dataarr = {
+                                    from: fromDate,
+                                    to: toDate,
+                                    category: "culture"
+                                };
+
+                            } else if(this.name == "IT"){
+                                dataarr = {
+                                    from: fromDate,
+                                    to: toDate,
+                                    category: "digital"
+                                };
+                            } else if(this.name == "기타"){
+                                dataarr = {
+                                    from: fromDate,
+                                    to: toDate,
+                                    category: "etc"
+                                };
+                            }
+
+                            $.ajax({
+                                type: "GET",
+                                async: true,
+                                url: '/classification_keyword?from=' + dataarr['from'] + '&to=' + dataarr['to'] + '&category=' + dataarr['category'],
+                                success: function(response) {
+                                    console.dir(response);
+                                    $('#piecontainer').html(response);
+                                }
+                            })
+                    }
+                }
+            }
+        }
+    }
+    });
+
+
+
+
+</script>
+
+
+
+
+</body>
+</html>

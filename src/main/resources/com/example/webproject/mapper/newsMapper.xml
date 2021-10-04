@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.webproject.mapper.NewsMapper">
+
+    <select id="getNewsCategoryList" resultType="com.example.webproject.NewsCategory">
+        <![CDATA[SELECT category, count(distinct(news_date, serial_num, category)) AS category_count
+        FROM news_category WHERE news_date >= to_date(#{fromDate}, 'YYYYMMDD') AND news_date <= to_date(#{toDate}, 'YYYYMMDD') group by category]]>
+    </select>
+
+    <select id="getNewsKeywordList" resultType="com.example.webproject.NewsKeyword">
+        <![CDATA[SELECT category, keyword, sum(keyword_count) AS keyword_count
+        FROM news_category
+        WHERE news_date >= to_date(#{fromDate}, 'YYYYMMDD') AND news_date <= to_date(#{toDate}, 'YYYYMMDD') AND text(category) = #{category} group by category, keyword order by category, keyword_count desc]]>
+    </select>
+
+    <select id="getNewsDateKeywordList" resultType="com.example.webproject.NewsDateKeyword">
+        <![CDATA[SELECT ROW_NUMBER() OVER(ORDER BY sum(keyword_count) DESC) AS id, keyword, sum(keyword_count) AS keyword_count
+                 FROM news_category
+                 WHERE news_date >= to_date(#{fromDate}, 'YYYYMMDD') AND news_date <= to_date(#{toDate}, 'YYYYMMDD')
+                 group by keyword]]>
+    </select>
+
+    <select id="getNewsDayKeywordTotalList" resultType="int">
+        <![CDATA[SELECT count(distinct(news_date)) AS total
+                 FROM news_category
+                 WHERE news_date >= to_date(#{fromDate}, 'YYYYMMDD') AND news_date <= to_date(#{toDate}, 'YYYYMMDD')]]>
+    </select>
+
+    <select id="getNewsDateKeywordTotalList" resultType="int">
+        <![CDATA[SELECT sum(keyword_count) AS total
+                 FROM news_category
+                 WHERE news_date >= to_date(#{fromDate}, 'YYYYMMDD') AND news_date <= to_date(#{toDate}, 'YYYYMMDD')]]>
+    </select>
+
+    <select id="getNewsDateList" resultType="com.example.webproject.NewsDate">
+        <![CDATA[SELECT news_date FROM news_list
+                 WHERE news_date >= to_date(#{fromDate}, 'YYYYMMDD') AND news_date <= to_date(#{toDate}, 'YYYYMMDD') group by news_date]]>
+    </select>
+
+    <select id="getNewsDayKeywordList" resultType="com.example.webproject.NewsDayKeyword">
+        <![CDATA[SELECT news_date, keyword, sum(keyword_count) AS keyword_count FROM news_category
+                 WHERE news_date >= to_date(#{fromDate}, 'YYYYMMDD') AND news_date <= to_date(#{toDate}, 'YYYYMMDD') AND keyword = #{keyword} group by news_date, keyword]]>
+    </select>
+
+    <select id="gettest" resultType="com.example.webproject.News">
+        <![CDATA[SELECT ROW_NUMBER() OVER(ORDER BY n.input_date DESC) AS id, n.news_date AS news_date, nc.category AS category, n.title AS title, nl.link AS link, n.press_agency AS press_agency, array_to_string(array_agg(nc.keyword), ', ') AS keyword, n.input_date AS input_date
+                 FROM news n LEFT JOIN news_category nc ON n.news_date = nc.news_date AND n.serial_num = nc.serial_num
+                             LEFT JOIN news_list nl ON n.news_date = nl.news_date AND n.serial_num = nl.serial_num
+                 WHERE n.news_date >= to_date(#{fromDate}, 'YYYYMMDD') AND n.news_date <= to_date(#{toDate}, 'YYYYMMDD') group by n.news_date, n.input_date, n.serial_num, nc.category, n.title, n.press_agency, nl.link]]>
+
+
+    </select>
+
+
+</mapper>
+

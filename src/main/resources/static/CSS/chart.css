@@ -1,0 +1,104 @@
+.highcharts-figure, .highcharts-data-table table {
+    min-width: 320px;
+    max-width: 700px;
+    margin: 1em auto;
+}
+
+.highcharts-data-table table {
+    font-family: Verdana, sans-serif;
+    border-collapse: collapse;
+    border: 1px solid #EBEBEB;
+    margin: 10px auto;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+.highcharts-data-table caption {
+    padding: 1em 0;
+    font-size: 1.2em;
+    color: #555;
+}
+.highcharts-data-table th {
+    font-weight: 600;
+    padding: 0.5em;
+}
+.highcharts-data-table td, .highcharts-data-table th, .highcharts-data-table caption {
+    padding: 0.5em;
+}
+.highcharts-data-table thead tr, .highcharts-data-table tr:nth-child(even) {
+    background: #f8f8f8;
+}
+.highcharts-data-table tr:hover {
+    background: #f1f7ff;
+}
+.piecharts-figure, .piecharts-data-table table {
+    min-width: 320px;
+    max-width: 660px;
+    /*margin: 1em auto;*/
+}
+
+.piecharts-data-table table {
+    font-family: Verdana, sans-serif;
+    border-collapse: collapse;
+    border: 1px solid #EBEBEB;
+    margin: 10px auto;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+.piecharts-data-table caption {
+    padding: 1em 0;
+    font-size: 1.2em;
+    color: #555;
+}
+.piecharts-data-table th {
+    font-weight: 600;
+    padding: 0.5em;
+}
+.piecharts-data-table td, .piecharts-data-table th, .piecharts-data-table caption {
+    padding: 0.5em;
+}
+.piecharts-data-table thead tr, .piecharts-data-table tr:nth-child(even) {
+    background: #f8f8f8;
+}
+.piecharts-data-table tr:hover {
+    background: #f1f7ff;
+}
+
+#areacontainer {
+    height: 400px;
+}
+
+.areacharts-figure, .areacharts-data-table table {
+    min-width: 350px;
+    max-width: 2500px;
+    margin: 1em auto;
+}
+
+.areacharts-data-table table {
+    font-family: Verdana, sans-serif;
+    border-collapse: collapse;
+    border: 1px solid #EBEBEB;
+    margin: 10px auto;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+}
+.areacharts-data-table caption {
+    padding: 1em 0;
+    font-size: 1.2em;
+    color: #555;
+}
+.areacharts-data-table th {
+    font-weight: 600;
+    padding: 0.5em;
+}
+.areacharts-data-table td, .areacharts-data-table th, .areacharts-data-table caption {
+    padding: 0.5em;
+}
+.areacharts-data-table thead tr, .areacharts-data-table tr:nth-child(even) {
+    background: #f8f8f8;
+}
+.areacharts-data-table tr:hover {
+    background: #f1f7ff;
+}
