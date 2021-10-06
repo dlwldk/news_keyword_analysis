@@ -101,6 +101,11 @@
     background-color: #ed2600;
 }
 
+.menuList a.current {
+    background-color: #ed2600;
+    color: #ffffff;
+}
+
 /* Demo purposes only */
 /*body {*/
 /*    background-color: #212121;*/

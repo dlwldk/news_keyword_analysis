@@ -3,15 +3,12 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <!--    <meta http-equiv="X-UA-Compatible" content="ie=edge">-->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>키워드 분석</title>
     <link rel="stylesheet" href="CSS/menu.css">
     <link rel="stylesheet" href="CSS/chart.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.min.css">-->
-    <!--    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker3.standalone.min.css">-->
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -25,13 +22,12 @@
 
 </head>
 <body>
-<!-- <img src="Image/kt_cs_logo.jpg" alt="My ae"> -->
+
 <ul class="menulist">
     <li><a href="./collected_data">수집 데이터</a></li>
     <li><a href="./classification">분류 분석</a></li>
-    <li><a href="./keyword_analysis">키워드 분석</a></li>
+    <li><a class="current" href="./keyword_analysis">키워드 분석</a></li>
 </ul>
-
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -118,12 +114,6 @@
     <input type="submit" value="검색">
 </form>
 
-<!--<div class="d-flex justify-content-center">-->
-
-
-<!--</div>-->
-
-
 <div class="container-fluid">
     <figure class="areacharts-figure">
         <div id="areacontainer" name="areacontainer"></div>
@@ -138,7 +128,6 @@
             <th scope="col">일 평균 (건)</th>
             <th scope="col">비중 (%)</th>
             <th scope="col">전년 대비 증감율 (%)</th>
-
         </tr>
         </thead>
         <tbody id="tbody">
@@ -153,13 +142,10 @@
                 th:text="${#numbers.formatDecimal(importance, 1, 2, 'POINT')}"></td>
             <td th:with="rate_of_change=${list.keyword_count}/365"
                 th:text="${#numbers.formatDecimal(rate_of_change, 2, 2, 'POINT')}"></td>
-<!--            <td th:text="${list2.keyword_count}/365"></td>-->
-
         </tr>
         </tbody>
     </table>
 </div>
-
 
 <script>
     function chartAjaxCall(keyword) {
@@ -176,8 +162,6 @@
         })
     }
 
-
 </script>
-
 
 </body>

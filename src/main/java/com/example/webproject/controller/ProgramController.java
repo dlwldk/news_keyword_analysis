@@ -38,115 +38,50 @@ public class ProgramController {
     @RequestMapping(value = "/collected_data", method = RequestMethod.GET)
     public String collected_data(
             Model model,
+            @ModelAttribute("search") Search search,
             HttpServletRequest request,
             @RequestParam(required = false, defaultValue = "") String searchText,
+            @RequestParam(required = false, defaultValue = "2021-08-01") String from,
+            @RequestParam(required = false, defaultValue = "2021-08-31") String to,
+            @RequestParam(required = false, defaultValue = "") String firstcolName,
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        String from = request.getParameter("from");
-        String to = request.getParameter("to");
-        String firstcolName = request.getParameter("firstcolName");
         String secondcolName = request.getParameter("secondcolName");
-        //String searchText = request.getParameter("searchText");
-        String toDate;
-        String fromDate;
 
-        if (from != null && to != null) {
-            fromDate = from.replace("-", "");
-            toDate = to.replace("-", "");
-        } else {
-            fromDate = "20210801";
-            toDate = "20210831";
-            from = "2021-08-01";
-            to = "2021-08-31";
-        }
+        String fromDate = from.replace("-", "");
+        String toDate = to.replace("-", "");
 
 
-        System.out.println("되긴하니----------------" );
-        //Page<News> newsList;
         Page<News> newsList = newsRepository.findNewsAll(fromDate, toDate, firstcolName, pageable);
 
         if(searchText.length() > 0) { //검색한 키워드가 있을 때
-            newsList = newsRepository.findNewsSearch(fromDate, toDate, firstcolName, secondcolName, searchText, pageable);
+            if(secondcolName.equals("keyword")) {
+                System.out.println("여기는 keyword");
+                newsList = newsRepository.findNewsKeyword(fromDate, toDate, firstcolName, searchText, pageable);
+
+            }
+            else if(secondcolName.equals("title")) {
+                System.out.println("여기는 title");
+                newsList = newsRepository.findNewsTitle(fromDate, toDate, firstcolName, searchText, pageable);
+
+            }
+            else {
+                System.out.println("여기는 press_agency");
+                newsList = newsRepository.findNewsPressAgency(fromDate, toDate, firstcolName, searchText, pageable);
+
+            }
         }
-        else { //검색한 키워드가 없을 때
-            newsList = newsRepository.findNewsAll(fromDate, toDate, firstcolName, pageable);
-        }
-
-
-
-
-//        Page<News> newsList = newsService.test(fromDate, toDate, pageable);
-//        Page<News> newsList = newsRepository.findNewsSearch(fromDate, toDate, searchText, pageable);
-//        Page<NewsView> newsList = newsViewRepository.findNewsViewAll(fromDate, toDate, pageable);
-//        if (firstcolName == "" && secondcolName == "" && searchText.length() == 0) {
-//            newsList = newsRepository.findNewsAll(fromDate, toDate, pageable);
-//        }
-//        if(firstcolName != "") { //분류 설정을 했을 때
-//            if(secondcolName != "") {
-//                if(searchText.length() == 0) { //검색한 키워드가 없을 때
-//
-//
-//                }
-//                else { //검색한 키워드가 없을 때
-//
-//                }
-//
-//            }
-//            else {
-//                if(searchText.length() == 0) { //검색한 키워드가 없을 때
-//
-//
-//                }
-//                else { //검색한 키워드가 있을 때
-//                    newsList = newsRepository.findNewsCategorySearch(fromDate, toDate, firstcolName, searchText, pageable);
-//                }
-//
-//            }
-//            newsList = newsRepository.findNewsCategory(fromDate, toDate, firstcolName, pageable);
-//
-//        }
-//        else { //분류 설정을 하지 않았을 때
-//            if(secondcolName != "") {
-//                if(searchText.length() == 0) { //검색한 키워드가 없을 때
-//                    newsList = newsRepository.findNewsAll(fromDate, toDate, pageable);
-//
-//                }
-//                else { //검색한 키워드가 있을 때
-//
-//                }
-//
-//            }
-//            else {
-//                if(searchText.length() == 0) { //검색한 키워드가 없을 때
-//
-//
-//                }
-//                else { //검색한 키워드가 없을 때
-//
-//                }
-//
-//            }
-//
-//
-//
-//        }
-//        if(firstcolName != "" && secondcolName == "" && searchText.length() == 0) {
-//            newsList = newsRepository.findNewsCategory(fromDate, toDate, firstcolName, pageable);
-//        }
-//        if(firstcolName == "" && secondcolName == "" && searchText.length() > 0) {
-//            newsList = newsRepository.findNewsSearch(fromDate, toDate, searchText, pageable);
-//        }
-
-        System.out.println("firstcolName: " + firstcolName);
-        System.out.println("secondcolName: " + secondcolName);
-        System.out.println("searchText: " + searchText);
 
         List<NewsDate> newsDateList = newsDateRepository.newsListDate(fromDate, toDate);
 
         model.addAttribute("fromDate", from);
         model.addAttribute("toDate", to);
-        int startPage = Math.max(1, newsList.getPageable().getPageNumber() - 5); //시작 페이지
-        int endPage = Math.min(newsList.getTotalPages(), newsList.getPageable().getPageNumber() + 5); //끝페이지
+//        int startPage = Math.max(1, newsList.getPageable().getPageNumber() - 5); //시작 페이지
+        int startPage = Math.max(1, newsList.getPageable().getPageNumber()); //시작 페이지
+        int endPage = Math.min(newsList.getTotalPages(), newsList.getPageable().getPageNumber() + 10); //끝페이지
+        System.out.println("startPage:" + startPage);
+        System.out.println("endPage:" + endPage);
+
         model.addAttribute("startPage", startPage);
         model.addAttribute("endPage", endPage);
         model.addAttribute("list", newsList); //뉴스 목록
@@ -156,23 +91,10 @@ public class ProgramController {
     }
 
     @RequestMapping(value = "/classification", method = RequestMethod.GET)
-    public String classification(Model model, HttpServletRequest request) {
-        String from = request.getParameter("from");
-        String to = request.getParameter("to");
-        String toDate;
-        String fromDate;
-
-        if (from != null && to != null) {
-            fromDate = from.replace("-", "");
-            toDate = to.replace("-", "");
-
-        } else {
-            fromDate = "20200901";
-            toDate = "20210831";
-            from = "2020-09-01";
-            to = "2021-08-31";
-        }
-
+    public String classification(Model model, @RequestParam(required = false, defaultValue = "2020-09-01") String from,
+                                 @RequestParam(required = false, defaultValue = "2021-08-31") String to) {
+        String fromDate = from.replace("-", "");
+        String toDate = to.replace("-", "");
         model.addAttribute("fromDate", from);
         model.addAttribute("toDate", to);
         model.addAttribute("newscategorycount", newsService.newsCategoryCount(fromDate, toDate));
@@ -181,43 +103,25 @@ public class ProgramController {
     }
 
     @RequestMapping(value = "/classification_keyword", method = RequestMethod.GET)
-    public String classification_keyword(Model model, String from, String to, String category) {
+    public String classification_keyword(Model model, @RequestParam(required = false, defaultValue = "2020-09-01") String from,
+                                         @RequestParam(required = false, defaultValue = "2021-08-31") String to, String category) {
 
-        String fromDate;
-        String toDate;
+        String fromDate = from.replace("-", "");
+        String toDate = to.replace("-", "");
 
-        if (from != null && to != null) {
-            fromDate = from.replace("-", "");
-            toDate = to.replace("-", "");
-
-        } else {
-            fromDate = "20200901";
-            toDate = "20210831";
-        }
         model.addAttribute("newskeywordcount", newsService.newsKeywordCount(fromDate, toDate, category));
         return "classification_keyword.html";
     }
 
 
     @RequestMapping(value = "/keyword_analysis", method = RequestMethod.GET)
-    public String keyword_analysis(Model model, HttpServletRequest request) throws ParseException {
-        String from = request.getParameter("from");
-        String to = request.getParameter("to");
-        String current_toDate;
-        String current_fromDate;
+    public String keyword_analysis(Model model, @RequestParam(required = false, defaultValue = "2020-09-01") String from,
+                                   @RequestParam(required = false, defaultValue = "2021-08-31") String to) throws ParseException {
+        String current_toDate = to.replace("-", "");;
+        String current_fromDate = from.replace("-", "");;
         String previous_fromDate;
         String previous_toDate;
 
-        if (from != null && to != null) {
-            current_fromDate = from.replace("-", "");
-            current_toDate = to.replace("-", "");
-
-        } else {
-            current_fromDate = "20200901";
-            current_toDate = "20210831";
-            from = "2020-09-01";
-            to = "2021-08-31";
-        }
         SimpleDateFormat transFormat = new SimpleDateFormat("yyyyMMdd");
         Calendar cal = Calendar.getInstance();
         Date pvfr = transFormat.parse(current_fromDate);
@@ -238,20 +142,14 @@ public class ProgramController {
     }
 
     @RequestMapping(value = "/keyword_analysis_keyword", method = RequestMethod.GET)
-    public String keyword_analysis_keyword(Model model, String from, String to, String keyword) throws ParseException {
+    public String keyword_analysis_keyword(Model model, @RequestParam(required = false, defaultValue = "2020-09-01") String from,
+                                           @RequestParam(required = false, defaultValue = "2021-08-31") String to, String keyword) throws ParseException {
 
         String previous_fromDate;
         String previous_toDate;
-        String current_fromDate;
-        String current_toDate;
+        String current_fromDate = from.replace("-", "");;
+        String current_toDate = to.replace("-", "");;
 
-        if (from != null && to != null) {
-            current_fromDate = from.replace("-", "");
-            current_toDate = to.replace("-", "");
-        } else {
-            current_fromDate = "20200901";
-            current_toDate = "20210831";
-        }
         SimpleDateFormat transFormat = new SimpleDateFormat("yyyyMMdd");
         Calendar cal = Calendar.getInstance();
         Date pvfr = transFormat.parse(current_fromDate);
@@ -262,7 +160,6 @@ public class ProgramController {
         cal.setTime(pvto);
         cal.add(Calendar.YEAR, -1);
         previous_toDate = transFormat.format(cal.getTime());
-
 
         model.addAttribute("current_newsdatekeyword", newsService.newsDateKeywordCount(current_fromDate, current_toDate));
         model.addAttribute("previous_newsdatekeyword", newsService.newsDateKeywordCount(previous_fromDate, previous_toDate));
